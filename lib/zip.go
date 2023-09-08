@@ -19,6 +19,9 @@ func Unzip(mode rune, zipfile, destination string) (error) {
     var rfile *zip.ReadCloser
     var files []*zip.File
 
+    // "jflag": Doesn't extract files following the Zip file hierarchy.
+    // "xflag": Thoroughly follow Zip file hierarchy, creating directory per
+    // directory.
     switch mode {
     	case 'j':
 		jflag = true
@@ -38,12 +41,13 @@ func Unzip(mode rune, zipfile, destination string) (error) {
     // write and execute (access) and that his/her group
     // (and the other users in general) can only read
     // and execute.
-    // No need to catch errors, I think.
+    // No need to catch errors, I think, since os.MkdirAll won't be returning
+    // errors so motiveless.
     _ = os.MkdirAll(destination, 0755)
-
-    files = rfile.File
-
+    
     // Extract each file inside the Zip file.
+    // Assign rfile.File struct array to "files", so we can iter over it.
+    files = rfile.File
     for f := 0; f < len(files); f++ {
 	    file := files[f]
 	    current_file, err := file.Open()

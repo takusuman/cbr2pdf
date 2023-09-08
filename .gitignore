@@ -1,2 +1,9 @@
+# Exclude Vim trash
+.*.un~
+*~
+.*~
+.*.swp
+
+# Other files
 Referências.txt
 *.exe

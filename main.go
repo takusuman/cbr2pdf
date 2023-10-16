@@ -95,23 +95,26 @@ func get_cbfile_info(file string) (string, string, string, error) {
 
 func get_uncompressor(archive string) func(string, string) error {
 	switch _, filetype, _, _ := get_cbfile_info(archive); filetype {
-	case "7z":
-	case "ace":
-	case "rar":
-	case "tar":
-		fmt.Fprintf(outfile, "ERROR: %s compression not implemented yet.\n",
-			filetype)
-	case "zip":
-		// Just a boilerplate to the lib.Unzip() function, so we doesn't
-		// need to have the other decompressors' functions with the same
-		// input.
-		c := func(zipfile, destination string) error {
-			err := lib.Unzip('x', zipfile, destination)
-		    return err
-		}
-        return c
-    default:
-        fmt.Fprintf(outfile, "ERROR: %s unsupported format.\n", filetype)
+		case "7z":
+		case "ace":
+		case "tar":
+			fmt.Fprintf(outfile, "ERROR: %s compression not implemented yet.\n",
+				filetype)
+		case "rar":
+			c := func(rarfile, destination string) error {
+				return extract.Unrar('e', rarfile, destination)
+			}
+			return c
+		case "zip":
+			// Just a boilerplate to the lib.Unzip() function, so we doesn't
+			// need to have the other decompressors' functions with the same
+			// input.
+			c := func(zipfile, destination string) error {
+				return extract.Unzip('j', zipfile, destination)
+		    	}
+			return c
+    		default:
+			fmt.Fprintf(outfile, "ERROR: %s unsupported format.\n", filetype)
 	}
     
     return nil
